@@ -1,0 +1,368 @@
+[mypage::header "CloudTk FAQ"]
+
+[FAQinit "CloudTk FAQ"]
+<p>
+
+<!-- the FAQ calls return a value that is the section
+     or question ID.  This comment hides them:
+
+[FAQsection "What is ...?"]
+[FAQ "What is CloudTk?" {
+<p>CloudTk is based on WebSockit2me - a TCP to WebSocket gateway that uses a noVNC to display Tk applications in modern Web Browser. It runs on Linux and requires Xvnc server (Tigervnc) to be loaded. Tk applications are listed on a web page. TclHttpd dynamically launches an Xdisplay via Xvnc and then starts a matchbox window manager and launches the Tk application. 
+}]
+
+[FAQ "What is TclHttpd?"  {
+<p>TclHttpd is a pure <a href="http://wiki.tcl.tk/445">Tcl</a> implementation of a Web server. See 
+<p><a href="http://wiki.tcl.tk/tclhttpd/">wiki.tcl.tk TclHttpd wiki page</a></p>
+<p><a href="/book/TCLHTTPD.html">TclHttpd Web Server</a>.
+<p><a href="/man/">TclHttpd Reference</a>.
+}]
+
+[FAQ "What is a Tclkit?" { 
+<p>A Tclkit is a single-file executable that provides a 
+complete <a href="http://wiki.tcl.tk/445">Tcl</a> and Tk runtime and can execute both normal <a href="http://wiki.tcl.tk/445">Tcl</a> 
+scripts or script archive 
+files known as StarKits. Tclkit is provided pre-built for a number of platforms and 
+is updated to track <a href="http://wiki.tcl.tk/445">Tcl</a> releases for the major platforms (Windows, Linux and MacOS X). 
+</p><p>For pre-built files see the 
+<a href="http://tclkits.rkeene.org/fossil/wiki/Downloads">Tclkit Downloads</a> page.
+<p>
+See also Brent Welch's sample book chapters from <a href="http://www.beedub.com/book">Practical Programming in Tcl and TK</a>.
+}]
+
+[FAQ "What is a Starkit?" {
+<p>A Starkit is a single-file packaging of a directory hierarchy containing <a href="http://wiki.tcl.tk/445">Tcl</a> scripts, 
+platform-specific compiled code, and application data.  A starkit leverages 
+<a href="http://wiki.tcl.tk/445">Tcl</a>s <a href="http://wiki.tcl.tk/2138">
+virtual filesystem</a> to provide <i>writeable</i> filesystem, meaning that a starkit 
+is modified at runtime as data is saved by the program.<p></p>Starkits facilitate 
+simple deployment of cross platform applications.<p></p>The name comes from 
+<b>ST</b>and<b>A</b>lone <b>R</b>untime.
+<p>
+See also Brent Welch's sample book chapters from <a href="http://www.beedub.com/book">Practical Programming in Tcl and TK</a>.
+}]
+
+[FAQ "What is the default HTTP port?" {
+<p>The default http port is 8015.
+}]
+
+[FAQ "What is the default HTTPS(SSL) port?" {
+<p>The default https port is 8016.
+}]
+
+[FAQ "What is the version of OpenSSL the Tcl TLS extension uses that comes with CloudTk?" {
+<p>LibreSSL 3.1.2
+}]
+
+[FAQ "What is the version of SSL/TLS CloudTk is configured to use?" {
+<p>CloudTk is configured to use TLS 1.2 only. Modern browsers that support
+WebSockets will support TLS 1.2 also.
+}]
+
+[FAQsection "How to ...?"]
+
+[FAQ "How to display a Tk application in a web browser using CloudTk?" {
+<p> On startup CloudTk creates a directory Tk/TkPool in the same directory
+ CloudTk.kit is installed. A sample application TkPool.tcl and a startup script TkStartup.tcl
+ are copied into this directory.
+<p> Point your browser to http://&lt;&lt;Your IP Address&gt;&gt;:8015/cloudtk/
+<p> A web page with a radio button with TkPool is display. Select the radio button and click submit.
+The TkPool application is displayed. Click below the white line and start to play.
+}]
+
+[FAQ "How to display your Tk and other X11 apllications in a web browser using CloudTk?" {
+<p> Create a directory with the Tk or X11 application name in the Tk/ directory like TkPool.
+The directory name is what is displayed in the webpage but this can be anything really. Copy the TkStartup.tcl file from the
+TkPool directory into your directory. Open TkStartup.tcl file in a text editor and edit the line starting with
+the command "source" and adjust the path to where your Tk application is. TclHttpd does not need to be
+restarted as the web page is generated on the fly. The web page should display two radio buttons. TkPool and the directory
+name you created. If you do not want TkPool to be displayed just delete the TkPool directory.
+<p>
+N.B. If you are running an X11 application (or older Tk app less than Tcl8.6) replace the "source" command with an "exec" command
+and the full path of your application.
+<p>
+e.g. exec /usr/bin/python3 /usr/local/cloudtk/Tk/FeetToMeters/FeetToMeters.py
+<p>
+e.g. exec /usr/bin/xclock
+<p>
+e.g. exec /usr/local/tclkit-8.4.18 /usr/local/cloudtk/Tk/GooWee/GooWee.tcl
+<p>
+e.g. exec /usr/bin/docker run --rm -i --cpus 0.1 -e DISPLAY=$env(DISPLAY) -v /tmp/.X11-unix:/tmp/.X11-unix --net=host gearanimation:1
+}]
+
+[FAQ "How to launch your Tk application from another Web Server?" {
+<p>Put a link to your Tk application like for example TkPool
+<p> http://&lt;&lt;Your IP Address&gt;&gt;:8015/cloudtk/VNC?session=new&Tk=TkPool
+<p>Make sure the first query parameter is "session=new"
+}]
+
+[FAQ "How to make your Tk application appear in a Web page?" {
+<p> By using inline frame &lt;iframe&gt; HTML tag in your Web page.
+<p> Put a link to your Tk application like for example TkPool
+<p>&lt;iframe height="600" width="600" src="http://&lt;&lt;Your IP Address&gt;&gt;:8015/cloudtk/VNC?session=new&Tk=TkPool" allowfullscreen&gt;&lt;/iframe&gt;
+<p>Make sure the first query parameter is "session=new"
+}]
+
+[FAQ "How to enable Authentication when accessing your Tk Applications(VNC) or the Website?" {
+<p>CloudTk has the ability to turn on Authentication for any combination of Tk Application page and the rest of CloudTk website pages.
+<p>
+<p>In the directory where CloudTk.kit is installed an "auth" directory is created. In this directory there is an "AuthTarget.txt" file. The following is written to "AuthTarget.txt" file by default:
+<p>
+<p>VNC 0
+<p>Website 0
+<p>"1" equals Authentication is "ON" and "0" is "OFF".
+<p>
+<p>Just edit this file to your requirements.
+}]
+
+[FAQ "How to change the default HTTP and HTTPS(SSL) ports?" {
+<p>To change the http port use -port &lt;port no.&gt; on the command line.
+<p>To change the https port use -https_port &lt;port no.&gt; on the command line.
+<p>e.g. ./tclkit CloudTk.kit -port 8080 -https_port 8443
+}]
+
+[FAQ "How to turn off HTTP?" {
+<p> Don't turn off HTTP by 
+setting -port 0 on the command like
+<p>e.g. ./tclkit CloudTk.kit -port 0 
+<p> This actually lets the OS choose a random high port to listen on.
+<p> To stop access to the HTTP port I would suggest filtering via a firewall or router and only
+allow access to HTTPS port.
+<p>
+Another solution would be to set the ip address for HTTP requests to the Loopback address of 127.0.0.1.
+<p> e.g. ./tclkit CloudTk.kit -ipaddr 127.0.0.1
+}]
+
+[FAQ "How to Setup HTTPS(SSL)?" {
+<p>To setup HTTPS, a Server certificate (server.pem) and a Server key (skey.pem) file need to be installed
+in the "certs" directory that is created where CloudTk.kit is installed. Openssl needs
+to be installed to generate a self signed certificate. On most Linux distributions this 
+is usually standard. 
+<p>
+<ul>
+<li><b>On Linux</b> change directory to the "certs" directory where CloudTk.kit is installed. Enter the following on
+the commandline. e.g. 
+<p>
+/usr/local/cloudtk/certs# openssl req -new -x509 -days 365 -nodes -out server.pem -keyout skey.pem
+<p>
+Hit the "Enter" key to accept the defaults to the questions.
+<p>
+</ul>
+<p>
+This creates a server.pem and a skey.pem file in the "certs" directory. Restart CloudTk and now HTTPS should be configured.
+<p>
+Point your browser to https://&lt;&lt;Your IP Address&gt;&gt;:8016/
+<p>
+<b>To use Let's Encrypt</b> copy from Let's Encrypt the fullchain.pem file to server.pem and privkey.pem file to skey.pem
+in the "certs" directory. Restart CloudTk and now HTTPS should be configured. 
+}]
+
+[FAQ "How to use your own Apache-style htpasswd file?" {
+<p>In the directory where CloudTk.kit is installed an "auth" directory is created.
+In this directory an AuthUserFile exists which has the webmaster username and password.
+Copy the contents of your htpasswd file and paste into the AuthUserFile. If you go to 
+the Access Control Editor you should see the new users added.
+}]
+
+[FAQ "How to Upgrade noVNC?" {
+<p>
+Download the noVNC master(master.zip or latest stable release) to the same directory where CloudTk.kit is installed.
+Unzip master.zip and a "noVNC-master" directory will be created. Rename the "noVNC-master" directory to "noVNC" directory.
+<p>e.g. mv noVNC-master/ noVNC/
+<p>
+<p> Restart CloudTk and it should detect the created "noVNC" directory
+and use the new version of noVNC. To go back to the inbuilt version of noVNC included
+with CloudTk just delete the "noVNC" directory you just created. If error messages appear in your browser after upgrading you may
+have to clear the browser cache.
+}]
+
+[FAQ "How to run CloudTk at startup on Linux?" {
+<p>
+You need to be familiar with how to create an "rc" script
+on your Linux distribution. The "rc" script would execute
+a shell script that you create usually in /usr/local/bin.
+<p>
+Create a shell script in /usr/local/bin with the following
+<p>
+#!/bin/sh<br>
+<p>
+exec /usr/local/cloudtk/tclkit /usr/local/cloudtk/CloudTk.kit -port 8080 -https_port 8443<br>
+<p>
+Most modern Linux distributions use Systemd. Refer to the man page.
+}]
+
+[FAQ "How to Customise settings in CloudTk?" {
+<p>
+1. A site wide configuration file CloudTk.conf in the Tk/ directory.
+ In this file are the state array variables to control certain aspects of server.
+<p>
+2. For application specific configuration, copy CloudTk.conf 
+to any of the Tk/&lt;app-directory-name&gt; and rename CloudTk.conf to 
+&lt;app-directory-name&gt;.conf. The settings you adjust in &lt;app-directory-name&gt;.conf 
+will take precendence over the site wide Tk/CloudTk.conf file. 
+Therefore using the TkPool app as an example, copy the Tk/CloudTk.conf 
+file to Tk/TkPool/TkPool.conf
+<p>
+3. For per session specific configuration , you can add any of the 
+state array variables used in the CloudTk.conf file as Url query 
+data when launching your application. See FAQ 2.16 Per session query data
+takes precendence over &lt;app-directory-name&gt;.conf and CloudTk.conf
+<p.
+
+}]
+
+[FAQ "How to add HTML files to CloudTk?" {
+<p>
+Within the Starkit of CloudTk.kit there is a htdocs/ directory
+which is the document root of the web server. This has an index.tml
+file in this directory and other html files. I have exposed a htdoc/ 
+directory in the same directory CloudTk.kit is installed. Therefore 
+you can create a new index.html or index.tml file or other files
+in this outside htdoc/ directory and CloudTk will deliver them to
+a web browser. If the same file name is in the outside htdocs/ 
+directory of the CloudTk.kit it takes precedence over the file with 
+the same name inside the CloudTk.kit. 
+<p>
+}]
+
+[FAQ "How to change the noVNC control tab menu?" {
+<p>
+The main file that launches the noVNC app is called vnc.html and 
+this is in the noVNC/ directory where you have CloudTk.kit installed. 
+This file has javascript in it for the noVNC menu (control tab). 
+The noVNC developers modified vnc.html when going from noVNC 1.3.0 
+to 1.4.0. I have modified the vnc.html file with some javascript. 
+<p>
+In the download directory for CloudTk
+<p>
+http://cloudtk.tcl-lang.org/Downloads/
+<p>
+the following files
+<p>
+vnc-fullscreen-130.html<br>
+vnc-fullscreen-140.html<br> 
+vnc-fullscreen-clipboard-130.html<br>
+vnc-fullscreen-clipboard-140.html<br>
+vnc-no-control-tab-140.html<br>
+vnc-notab-130.html<br>
+<p>
+These are the files I used for adjusting the noVNC control tab in 
+version 1.3.0 (CloudTk-130-xx.kit) and then 1.4.0 (CloudTk-140-xx.kit).
+<p>
+There are a few ways to use these files
+<p>
+1. You could move the current vnc.html to vnc.html.orig and then 
+download for example vnc-fullscreen-130.html to the noVNC/ directory 
+and rename it vnc.html.
+<p>
+2. Download for example vnc-fullscreen-130.html to the noVNC/ directory. 
+Edit the CloudTk.conf under the Tk/ directory by changing from
+<p>
+state noVNC,html vnc.html
+<p>
+to 
+<p>
+state noVNC,html vnc-fullscreen-130.html
+<p>
+3. If you just want to change the noVNC control tab for one application 
+then you can create a configuration file that only effects that 
+application. To do this copy the Tk/CloudTk.conf file to 
+Tk/&lt;app-directory-name&gt;/&lt;app-directory-name&gt;.conf. So for TkPool 
+application you would copy Tk/CloudTk.conf to Tk/TkPool/TkPool.conf. 
+Then you would edit TkPool.conf as per number 2 above.
+<p>
+4.Another way to change the noVNC control tab for one application is 
+to create a &lt;app-directory-name&gt;_vnc.html file in the 
+Tk/&lt;app-directory-name&gt;/ directory. So for the TkPool app you would 
+copy for example vnc-fullscreen-130.html to Tk/TkPool/TkPool_vnc.html.
+
+<p>
+}]
+
+[FAQ "How to add arguments to your application using URL query parameters?" {
+<p>
+You need to be using a later version of CloudTk. The latest release at the 
+time of writing is CloudTk-140-50.kit available from the Downloads 
+directory on the Cloudk website
+<p>
+http://cloudtk.tcl-lang.org/Downloads/
+<p>
+Query parameters of the form “TkArgs,xxxx” are made available as “argv” 
+arguments to the TkStartup.tcl script which launches your application. 
+So for example to pass the arguments user=foo, password=bar, 
+directory=/home/foo, file=test.txt to the TkPool app the url would be
+<p>
+https://youraddress:8016/cloudtk/VNC?session=new&Tk=TkPool&TkArgs,user=foo&TkArgs,password=bar&TkArgs,directory=/home/foo&TkArgs,file=test.txt
+<p>
+You should see the arguments passed to the TkStartup file by checking the process with
+<p>
+ps x
+<p>
+582756 pts/0 Sl+ 0:01 ../tclkit-8.6.3 CloudTk-130-48.kit -port 8080 -debug 1<br>
+582774 pts/0 Sl+ 0:00 /usr/bin/Xvnc :51 -geometry 1024x768 -fp -localhost -desktop TkPool SecurityTypes=None<br>
+582775 pts/0 S+ 0:00 /usr/bin/matchbox-window-manager -display :51 -use_titlebar yes<br>
+582776 pts/0 Sl+ 0:00 /usr/local/cloudtk/Test/../tclkit-8.6.3 /usr/local/cloudtk/Test/Tk/TkPool/TkStartup.tcl -display :51 -user foo -file test.txt -password bar -directory /home/foo<br>
+<p>
+each of the variable names are converted to lower case and have “-” in front of them.
+<p>
+}]
+
+[FAQ "How to start the Xserver with the current used screen width x height in the browse?" {
+<p>
+You would need to put some javascript in the page that you launch your application 
+from to obtain the screen width x height like
+<p>
+https://www.tutorialrepublic.com/faq/how-to-detect-screen-resolution-with-javascript.php
+<p>
+then using Javascript somehow append it to the URL as a query parameter that launches 
+CloudTk (Sorry I don’t know how to do this with Javascript). So for example we 
+are using the TkPool app. If the Javascript detects your device has a screen 
+resolution of 800x600 then the javascript would insert 800x600 after the 
+Xvnc,geometry= so the CloudTk URL would be
+<p>
+http://&lt;&lt;Your IP Address&gt;&gt;:8015/cloudtk/VNC?session=new&Tk=TkPool&Xvnc,geometry=800x600
+<p>
+So for this instance of TkPool, the Xvnc server geometry will be 800x600 on startup.
+<p>
+You’ll notice Xvnc,geometry is one of the state array names used in the CloudTk.conf. 
+You can include any of these as a query parameter to control individual instance of 
+an app on CloudTk. The only state array names that can not be controlled via a query 
+parameter are Xvnc,exec and Xsetroot,exec.
+<p>
+You could also add a TkArgs query parameter if you wanted to  pass it as argument 
+to your X11 application like
+<p>
+http://&lt;&lt;Your IP Address&gt;&gt;:8015/cloudtk/VNC?session=new&Tk=TkPool&Xvnc,geometry=800x600&TkArgs,geometry=800x600
+<p>
+}]
+
+
+[FAQsection "General Questions"]
+[FAQ "What do the messages mean when CloudTk is started?" {
+<p>
+The mesages that appear like below:
+<p>
+can't find package limit<br>
+Running with default file descriptor limit<br>
+/debug user "debug" password "XXXXXXXXXX"<br>
+httpd started on port 8015<br>
+secure httpd started on SSL port 8016<br>
+<p>
+The first two lines can be ignored as they are just informational messages.<br>
+<p>
+The /debug line shows the username and password for the user "debug". This is used
+when the server encounters an error in a Tcl script, the server requires
+authorisation from the user "debug" before the error message is displayed.   
+<p>
+The "httpd started on port 8015" informs that the server started and is listening on port 8015.
+<p>
+The "secure httpd started on SSL port 8016", this message appears if there
+is a server.pem file present in the "certs" directory. It informs that the server
+will be listenining for https connections on port 8016.
+}]
+
+Just before FAQgen -->
+
+[FAQgen]
+
+[mypage::footer]

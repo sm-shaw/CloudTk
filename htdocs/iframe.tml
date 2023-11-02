@@ -1,0 +1,34 @@
+[html::description "TclHttpd, the Tcl Web Server, is an extensible
+platform for web application development."]
+[html::keywords Tcl TclHttpd Tcl/Tk "Tcl Web Server" "Web Server"]
+[mypage::header "CloudTk iFrame Page"]
+[Doc_Dynamic]
+
+[clock format [clock seconds] -format "%B %d, %Y %H:%M:%S"]
+
+<script type="text/javascript">
+
+function Reload () {
+if (performance.navigation.type == performance.navigation.TYPE_RELOAD) {
+ console.info( "This page is reloaded" );
+} else {
+  console.info( "This page is not reloaded" );
+const url   = window.location.href;
+
+wndow.parent.history.pushState(null, null, url);
+}
+}
+</script>
+
+<p>
+<iframe onload="Reload() "id="iframe1" src="//cloudtk.tcl-lang.org:8088/cloudtk/VNC?session=new&Tk=TkPool"
+width="600"
+height="650"
+align="left"
+allowfullscreen>
+</iframe>
+
+<p>
+
+
+

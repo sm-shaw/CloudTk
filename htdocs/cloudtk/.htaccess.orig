@@ -1,0 +1,10 @@
+#AuthUserFile /usr/local/htaccess/passwd
+#AuthUserFile /home/michaelh/michaelhpc/tclstuff/auth/AuthUserFile
+#AuthUserFile 
+#AuthGroupFile /usr/local/htaccess/group
+AuthName TheAuthName
+AuthType Basic
+ 
+<Limit GET POST>
+require user Jeff
+</Limit>              

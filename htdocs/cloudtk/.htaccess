@@ -1,0 +1,6 @@
+AuthName TheAuthName
+AuthType Basic
+ 
+<Limit GET POST>
+require user Jeff
+</Limit>              

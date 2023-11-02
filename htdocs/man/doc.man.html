@@ -1,0 +1,209 @@
+<html><head>
+<title>httpd::doc - Tcl Web Server </title>
+</head>
+<! -- Generated from file '' by tcllib/doctools with format 'html'
+   -->
+<! -- Copyright &copy; 2003 Andreas Kupries &lt;andreas_kupries@users.sourceforge.net&gt;
+   -->
+<! -- CVS: $Id$ httpd::doc.n
+   -->
+
+<body>
+<h1> httpd::doc(n) 1.1  &quot;Tcl Web Server&quot;</h1>
+<h2><a name="name">NAME</a></h2>
+<p>
+<p> httpd::doc - File handling
+
+
+
+
+<h2><a name="synopsis">SYNOPSIS</a></h2>
+<p>
+package require <b>httpd::doc ?1.1?</b><br>
+<br><table border=1 width=100% cellspacing=0 cellpadding=0><tr            bgcolor=lightyellow><td bgcolor=lightyellow><table 0 width=100% cellspacing=0 cellpadding=0><tr valign=top ><td ><a href="#1"><b class='cmd'>Doc_AddRoot</b> <i class='arg'>virtual</i> <i class='arg'>directory</i> <i class='arg'>arg</i>...</a></td></tr>
+<tr valign=top ><td ><a href="#2"><b class='cmd'>Doc_Root</b> ?<i class='arg'>real</i> <i class='arg'>arg</i>...?</a></td></tr>
+<tr valign=top ><td ><a href="#3"><b class='cmd'>Doc_RegisterRoot</b> <i class='arg'>virtual directory</i></a></td></tr>
+<tr valign=top ><td ><a href="#4"><b class='cmd'>Doc_Include</b> <i class='arg'>filename</i></a></td></tr>
+<tr valign=top ><td ><a href="#5"><b class='cmd'>Doc_PublicHtml</b> ?<i class='arg'>homedir</i>?</a></td></tr>
+<tr valign=top ><td ><a href="#6"><b class='cmd'>Doc_Virtual</b> <i class='arg'>sock curfile virtual</i></a></td></tr>
+<tr valign=top ><td ><a href="#7"><b class='cmd'>Doc_Handle</b> <i class='arg'>prefix path suffix sock</i></a></td></tr>
+</table></td></tr></table>
+<h2><a name="description">DESCRIPTION</a></h2>
+<p>
+
+The package <strong>httpd::doc</strong> provides a domain for the serving of
+urls from the filesystem. This is also the domain through which the
+TML template facility is made available. It has additional tie-ins to
+the packages <strong>httpd::cgi</strong> (CGI applications stored in the
+fileststem) and <strong>httpd::dirlist</strong> (Directory listings as
+virtual files).
+
+
+<h2><a name="publicapi">Public API</a></h2>
+<p>
+<p>
+
+<dl>
+
+<dt>Access control<dd>
+
+This package installs an access control callback,
+<b class='cmd'>DocAccessControl</b> which uses the
+package <strong>httpd::auth</strong> to determine if an request for an url
+has to be denied or not.  This method searches the directory
+path to the file for .htaccess or .tclaccess files that specify
+access controls.  These are explained in the /access/ area
+of the default web site distributed with the server.
+
+<br><br>
+<dt><a name="1"><b class='cmd'>Doc_AddRoot</b> <i class='arg'>virtual</i> <i class='arg'>directory</i> <i class='arg'>arg</i>...</a><dd>
+
+
+This commands adds a mapping from the url prefix <i class='arg'>virtual</i> to the
+<i class='arg'>directory</i> in the filesystem.
+
+Any additional arguments will be given as options and values to the
+internal <b class='cmd'>Url_PrefixInstall</b> call registering <i class='arg'>virtual</i> as a
+new domain.
+
+<em>Note:</em> The last implies that from <strong>httpd::url</strong>'s point
+of view each document root is a separate url domain.
+
+
+<br><br>
+<dt><a name="2"><b class='cmd'>Doc_Root</b> ?<i class='arg'>real</i> <i class='arg'>arg</i>...?</a><dd>
+
+
+A convenient wrapper around <b class='cmd'>Doc_AddRoot</b>. It not only installs
+the directory <i class='arg'>real</i> as a document domain, but associates it with
+the root of the url tree on this server, i.e. &quot;<strong>/</strong>&quot;.
+
+<br><br>
+
+The command will return the name of the directory of that document
+root if no argument is specified. Otherwise it will set this document
+root and return the empty string.
+
+<br><br>
+
+All arguments coming after are additional options and values which are
+given to <b class='cmd'>Url_PrefixInstall</b>.
+
+
+<br><br>
+<dt><a name="3"><b class='cmd'>Doc_RegisterRoot</b> <i class='arg'>virtual directory</i></a><dd>
+
+
+Use this call to add a file system managed by any Domain Handler
+(e.g. CGI for example) to this package. This registers the mapping
+from urls in the domain to files, as required for <b class='cmd'>Doc_Virtual</b>.
+
+
+<br><br>
+<dt><a name="4"><b class='cmd'>Doc_Include</b> <i class='arg'>filename</i></a><dd>
+
+
+Reads the contents of the file <i class='arg'>filename</i> and substitutes them via
+<b class='cmd'>subst</b> at the tcl stack level at which this procedure was called.
+The result of the substitution is returned as the result of the
+command. A relative path will be joined with the directory at the top
+of the include stack in global variable <strong>page(includeStack)</strong>.
+
+
+<br><br>
+<dt><a name="5"><b class='cmd'>Doc_PublicHtml</b> ?<i class='arg'>homedir</i>?</a><dd>
+
+
+En- and disables the handling of urls of the form &quot;<strong>~user/a/b/...</strong>&quot;
+by mapping them to the subdirectory <i class='arg'>homedir</i> of that users
+account.  The command will by default use the subdirectory
+
+&quot;<strong>public_html</strong>&quot; if no directory was specified explicitly.
+
+To disable the mapping invoke the command using the empty string for
+the name of the subdirectory.
+
+
+<br><br>
+<dt><a name="6"><b class='cmd'>Doc_Virtual</b> <i class='arg'>sock curfile virtual</i></a><dd>
+
+
+This command looks up the url <i class='arg'>virtual</i> and returns the associated
+path in the filesystem. It will return the empty string if
+<i class='arg'>virtual</i> is not managed by this package.
+
+<br><br>
+
+If <i class='arg'>virtual</i> is a relative url, then <i class='arg'>curfile</i> has to be
+specified and will be treated as the <em>path</em> of the dcoument
+containing the reference to <i class='arg'>virtual</i>.
+
+<br><br>
+
+The argument <i class='arg'>sock</i> represents the current connection. It is not
+used by the command.
+
+
+
+<br><br>
+<dt><a name="7"><b class='cmd'>Doc_Handle</b> <i class='arg'>prefix path suffix sock</i></a><dd>
+
+
+The main command for the handling of document urls.
+Exported for use by other domains which have to handle
+files.
+
+The first three arguments specify the url to handle, and the file
+associated with it. The last argument is the connection making the
+request. The command assumes that all these pieces actually match up
+with each other.
+
+<br><br>
+
+The command directs requests for directories always to the package
+<strong>httpd::dirlist</strong>. Otherwise it will determine the mime-type of
+the requested document and then either invoke a special handler for
+that type if such present or directly reply with the contents of that
+file if there is no special handler for the type.
+
+<br><br>
+
+If the <i class='arg'>path</i> does not exist in the filesystem then it will try to
+find an alternative it can serve. A not-found reply will be generated
+only if that fails too.
+
+It is this fallback mechanism which calls the template facility when
+necessary.
+
+<br><br>
+
+The handler mechanism described above is also dependent on the
+existence of appropriate file extension to mime type mapping in the
+package <strong>httpd::mtype</strong> as otherwise special files will not be
+recognized as such, i.e. the chosen mime type will be wrong.
+
+If a file &quot;<strong>mime.types</strong>&quot; is present in the server library directory
+(residence of all packages) it will be read automatically during
+startup and used to set up a number of standard mappingsa to support
+the type specific handlers exported by the various server packages.
+
+</dl>
+
+
+
+
+
+
+
+
+<h2><a name="seealso">SEE ALSO</a></h2>
+<p>
+httpd, httpd::auth, httpd::cgi, httpd::cookie, httpd::dirlist, httpd::doc_error, httpd::fallback, httpd::mtype, httpd::url
+<h2><a name="keywords">KEYWORDS</a></h2>
+<p>
+documents, filesystem, web server
+<h2><a name="copyright">COPYRIGHT</a></h2>
+<p>
+Copyright &copy; 2003 Andreas Kupries &lt;andreas_kupries@users.sourceforge.net&gt;<br>
+</body></html>
+

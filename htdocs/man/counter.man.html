@@ -1,0 +1,175 @@
+<html><head>
+<title>httpd::counter - Tcl Web Server </title>
+</head>
+<! -- Generated from file '' by tcllib/doctools with format 'html'
+   -->
+<! -- Copyright &copy; 2003 Andreas Kupries &lt;andreas_kupries@users.sourceforge.net&gt;
+   -->
+<! -- CVS: $Id$ httpd::counter.n
+   -->
+
+<body>
+<h1> httpd::counter(n) 1.0  &quot;Tcl Web Server&quot;</h1>
+<h2><a name="name">NAME</a></h2>
+<p>
+<p> httpd::counter - Counters and histograms
+
+
+
+
+<h2><a name="synopsis">SYNOPSIS</a></h2>
+<p>
+package require <b>httpd::counter ?1.0?</b><br>
+<br><table border=1 width=100% cellspacing=0 cellpadding=0><tr            bgcolor=lightyellow><td bgcolor=lightyellow><table 0 width=100% cellspacing=0 cellpadding=0><tr valign=top ><td ><a href="#1"><b class='cmd'>Counter_Init</b> ?<i class='arg'>secPerMinute</i>?</a></td></tr>
+<tr valign=top ><td ><a href="#2"><b class='cmd'>Counter_Checkpoint</b> </a></td></tr>
+<tr valign=top ><td ><a href="#3"><b class='cmd'>Count</b> <i class='arg'>what</i> ?<i class='arg'>delta</i>?</a></td></tr>
+<tr valign=top ><td ><a href="#4"><b class='cmd'>CountHist</b> <i class='arg'>what</i> ?<i class='arg'>delta</i>?</a></td></tr>
+<tr valign=top ><td ><a href="#5"><b class='cmd'>CountName</b> <i class='arg'>instance</i> <i class='arg'>tag</i></a></td></tr>
+<tr valign=top ><td ><a href="#6"><b class='cmd'>Counter_Reset</b> <i class='arg'>what</i> <i class='arg'>arg</i>...</a></td></tr>
+</table></td></tr></table>
+<h2><a name="description">DESCRIPTION</a></h2>
+<p>
+
+The package <strong>httpd::counter</strong> is a thin layer over the package
+<strong>counter</strong> in tcllib, adapting this general package for use in
+a web server.
+
+<p>
+
+It pre-declares a number of non-simple counters (e.g., the time-based
+histogram for urlhits, and the interval-histogram for service times)
+and everything else defaults to a basic counter.  Once things are
+declared, the <b class='cmd'>counter::count</b> function counts things for us.
+
+<p>
+
+This package has a soft-dependency on the package
+
+<strong>httpd::log</strong>. The command <b class='cmd'>Counter_Checkpoint</b> will save
+the state actually if and only if <strong>httpd::log</strong> is present,
+because it tries to take the information about the filename to use
+from it. The dependency is soft because if the <strong>httpd::log</strong> is
+not present saving the state will simply be disabled without affecting
+the remainder of this package.
+
+
+<h2><a name="publicapi">Public API</a></h2>
+<p>
+<p>
+
+<dl>
+
+<dt><a name="1"><b class='cmd'>Counter_Init</b> ?<i class='arg'>secPerMinute</i>?</a><dd>
+
+
+Initializes the package. If in argument is specified it will tell the
+system how many seconds are there in a minute. This value defaults to
+<strong>60</strong>.
+
+
+<br><br>
+<dt><a name="2"><b class='cmd'>Counter_Checkpoint</b> </a><dd>
+
+
+Writes the current urlhits status into the counter log.
+THe base name for the file used comes out of the package
+<strong>httpd::log</strong>.
+
+<br><br>
+
+This command is hooked into the server shutdown sequence
+via <b class='cmd'>Httpd_RegisterShutdown</b>.
+
+
+
+<br><br>
+<dt><a name="3"><b class='cmd'>Count</b> <i class='arg'>what</i> ?<i class='arg'>delta</i>?</a><dd>
+
+
+Increments the counter identified by <i class='arg'>what</i> by <i class='arg'>delta</i>.
+If <i class='arg'>delta</i> is not specified it defaults to <strong>1</strong>.
+
+If the counter <i class='arg'>what</i> does not exist at the time of the call it
+will be created automatically.
+
+
+<br><br>
+<dt><a name="4"><b class='cmd'>CountHist</b> <i class='arg'>what</i> ?<i class='arg'>delta</i>?</a><dd>
+
+
+An alias of <b class='cmd'>Count</b> which assumes that the counter exists. It does
+everything <b class='cmd'>Count</b> does, except for the initialization of an
+non-existing counter.
+
+
+<br><br>
+<dt><a name="5"><b class='cmd'>CountName</b> <i class='arg'>instance</i> <i class='arg'>tag</i></a><dd>
+
+
+Increments the bucket <i class='arg'>instance</i> of the histogram counter
+identified by <i class='arg'>tag</i> by 1.
+
+If the counter <i class='arg'>tag</i> does not exist at the time of the call it
+will be created automatically.
+
+
+<br><br>
+<dt><a name="6"><b class='cmd'>Counter_Reset</b> <i class='arg'>what</i> <i class='arg'>arg</i>...</a><dd>
+
+
+Resets the counter <i class='arg'>what</i>. The additional arguments control the
+re-initialization of the counter, but if and only if the type of the
+counter is not known. If it is known they are ignored.
+
+</dl>
+
+
+<h2><a name="predefinedcounters">Predefined counters</a></h2>
+<p>
+
+The package pre-creates the following counters for use by the other
+modules of the web server.
+
+<dl>
+<dt><strong>urlhits</strong><dd>
+The number of requests serviced.
+
+<br><br>
+<dt><strong>serviceTime</strong><dd>
+Histogram of connection service times.
+
+<br><br>
+<dt><strong>domainHit</strong><dd>
+<dt><strong>hit</strong><dd>
+<dt><strong>notfound</strong><dd>
+<dt><strong>error</strong><dd>
+Group counters for per-page, not-found, and error statistics.
+
+<br><br>
+<dt><strong>accepts</strong><dd>
+<dt><strong>sockets</strong><dd>
+<dt><strong>connections</strong><dd>
+<dt><strong>urlreply</strong><dd>
+<dt><strong>keepalive</strong><dd>
+<dt><strong>connclose</strong><dd>
+<dt><strong>http1.0</strong><dd>
+<dt><strong>http1.1</strong><dd>
+<dt><strong>cgihits</strong><dd>
+Simple counters for each kind of connection event.
+
+</dl>
+
+
+
+
+<h2><a name="seealso">SEE ALSO</a></h2>
+<p>
+httpd, httpd::log
+<h2><a name="keywords">KEYWORDS</a></h2>
+<p>
+counters, web server
+<h2><a name="copyright">COPYRIGHT</a></h2>
+<p>
+Copyright &copy; 2003 Andreas Kupries &lt;andreas_kupries@users.sourceforge.net&gt;<br>
+</body></html>
+

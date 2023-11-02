@@ -1,0 +1,114 @@
+<html><head>
+<title>httpd::doc_error - Tcl Web Server </title>
+</head>
+<! -- Generated from file '' by tcllib/doctools with format 'html'
+   -->
+<! -- Copyright &copy; 2003 Andreas Kupries &lt;andreas_kupries@users.sourceforge.net&gt;
+   -->
+<! -- CVS: $Id$ httpd::doc_error.n
+   -->
+
+<body>
+<h1> httpd::doc_error(n) 1.0  &quot;Tcl Web Server&quot;</h1>
+<h2><a name="name">NAME</a></h2>
+<p>
+<p> httpd::doc_error - Commands to generate error and not-found pages
+
+
+
+
+<h2><a name="synopsis">SYNOPSIS</a></h2>
+<p>
+package require <b>httpd::doc_error ?1.0?</b><br>
+<br><table border=1 width=100% cellspacing=0 cellpadding=0><tr            bgcolor=lightyellow><td bgcolor=lightyellow><table 0 width=100% cellspacing=0 cellpadding=0><tr valign=top ><td ><a href="#1"><b class='cmd'>Doc_NotFoundPage</b> <i class='arg'>virtual</i></a></td></tr>
+<tr valign=top ><td ><a href="#2"><b class='cmd'>Doc_ErrorPage</b> <i class='arg'>virtual</i></a></td></tr>
+<tr valign=top ><td ><a href="#3"><b class='cmd'>Doc_NotFound</b> <i class='arg'>sock</i></a></td></tr>
+<tr valign=top ><td ><a href="#4"><b class='cmd'>Doc_Error</b> <i class='arg'>sock</i> <i class='arg'>ei</i></a></td></tr>
+<tr valign=top ><td ><a href="#5"><b class='cmd'>Doc_ErrorInfo</b> </a></td></tr>
+<tr valign=top ><td ><a href="#6"><b class='cmd'>Doc_UrlNotFound</b> </a></td></tr>
+</table></td></tr></table>
+<h2><a name="description">DESCRIPTION</a></h2>
+<p>
+
+The package <strong>httpd::doc_error</strong> provides a number of commands
+for the generation of standard error and not-found pages.
+
+<p>
+
+<h2><a name="publicapi">Public API</a></h2>
+<p>
+<p>
+
+<dl>
+
+<dt><a name="1"><b class='cmd'>Doc_NotFoundPage</b> <i class='arg'>virtual</i></a><dd>
+
+
+Registers the url (<i class='arg'>virtual</i>) and thus the file of the not-found
+page in the package <strong>httpd::doc</strong>. The contents of the file are
+always subst'ed to generate the actual reply send to the client.
+
+In other words, while there is basic templating for this page via
+<strong>httpd::subst</strong> the full-blown TML is <em>not</em> available
+here.
+
+
+<br><br>
+<dt><a name="2"><b class='cmd'>Doc_ErrorPage</b> <i class='arg'>virtual</i></a><dd>
+
+
+See <b class='cmd'>Doc_NotFoundPage</b> above, except for the error page.
+
+
+<br><br>
+<dt><a name="3"><b class='cmd'>Doc_NotFound</b> <i class='arg'>sock</i></a><dd>
+
+
+Called when a page is missing. Looks for a handler page registered
+with <b class='cmd'>Doc_NotFoundPage</b>, sets up the substitution context and then
+returns the result of the substitution run. The argument <i class='arg'>sock</i>
+specifies the connection and request which asked for the missing page.
+
+A subst handler can retrieve the url which was not found via the
+command <b class='cmd'>Doc_UrlNotFound</b> below.
+
+
+<br><br>
+<dt><a name="4"><b class='cmd'>Doc_Error</b> <i class='arg'>sock</i> <i class='arg'>ei</i></a><dd>
+
+
+Like <b class='cmd'>Doc_NotFound</b>, except that is called when an error occured
+while processing the request on connection <i class='arg'>sock</i>.  <i class='arg'>ei</i>
+contains the error information to show in the page.  A subst handler
+can retrieve this information via <b class='cmd'>Doc_ErrorInfo</b> below.
+
+
+<br><br>
+<dt><a name="5"><b class='cmd'>Doc_ErrorInfo</b> </a><dd>
+
+
+Returns the error information raised by the package.
+
+
+<br><br>
+<dt><a name="6"><b class='cmd'>Doc_UrlNotFound</b> </a><dd>
+
+
+Returns the url which was not found.
+
+</dl>
+
+
+
+
+<h2><a name="seealso">SEE ALSO</a></h2>
+<p>
+httpd, httpd::counter, httpd::doc, httpd::log, httpd::subst, httpd::utils
+<h2><a name="keywords">KEYWORDS</a></h2>
+<p>
+documents, error, files, substitution, templates, web server
+<h2><a name="copyright">COPYRIGHT</a></h2>
+<p>
+Copyright &copy; 2003 Andreas Kupries &lt;andreas_kupries@users.sourceforge.net&gt;<br>
+</body></html>
+

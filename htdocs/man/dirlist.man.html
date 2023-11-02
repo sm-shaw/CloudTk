@@ -1,0 +1,116 @@
+<html><head>
+<title>httpd::dirlist - Tcl Web Server </title>
+</head>
+<! -- Generated from file '' by tcllib/doctools with format 'html'
+   -->
+<! -- Copyright &copy; 2003 Andreas Kupries &lt;andreas_kupries@users.sourceforge.net&gt;
+   -->
+<! -- CVS: $Id$ httpd::dirlist.n
+   -->
+
+<body>
+<h1> httpd::dirlist(n) 1.1  &quot;Tcl Web Server&quot;</h1>
+<h2><a name="name">NAME</a></h2>
+<p>
+<p> httpd::dirlist - directory handling
+
+
+
+
+<h2><a name="synopsis">SYNOPSIS</a></h2>
+<p>
+package require <b>httpd::dirlist ?1.1?</b><br>
+<br><table border=1 width=100% cellspacing=0 cellpadding=0><tr            bgcolor=lightyellow><td bgcolor=lightyellow><table 0 width=100% cellspacing=0 cellpadding=0><tr valign=top ><td ><a href="#1"><b class='cmd'>Dirlist_IndexFile</b> <i class='arg'>pattern</i></a></td></tr>
+<tr valign=top ><td ><a href="#2"><b class='cmd'>Dirlist_Directory</b> <i class='arg'>prefix path suffix sock</i></a></td></tr>
+<tr valign=top ><td ><a href="#3"><b class='cmd'>Dir_HideListings</b> </a></td></tr>
+<tr valign=top ><td ><a href="#4"><b class='cmd'>Dir_ShowListings</b> </a></td></tr>
+<tr valign=top ><td ><a href="#5"><b class='cmd'>Dir_ListingIsHidden</b> </a></td></tr>
+</table></td></tr></table>
+<h2><a name="description">DESCRIPTION</a></h2>
+<p>
+
+The package <strong>httpd::dirlist</strong> is an adjunct to the
+package <strong>httpd::doc</strong>, it provides the handling of
+directories to it.
+
+Note that the two packages cross-reference each other, in other words
+they are interdependent. It might make sense to make them one package
+in the future.
+
+
+<h2><a name="publicapi">Public API</a></h2>
+<p>
+<p>
+
+<dl>
+
+<dt><a name="1"><b class='cmd'>Dirlist_IndexFile</b> <i class='arg'>pattern</i></a><dd>
+
+
+The command sets the <b class='cmd'>glob</b> pattern used by the package
+to locate the index file for a directory.
+
+
+<br><br>
+<dt><a name="2"><b class='cmd'>Dirlist_Directory</b> <i class='arg'>prefix path suffix sock</i></a><dd>
+
+
+This is the main command for the handling of directories.
+The name of the requested directory is in <i class='arg'>path</i>.
+
+<br><br>
+
+The command will first try to locate an index file for the directory
+and failing that it will either reply with a not-found message
+generate a listing of the directory contents on its own, depending on
+whether directories are considered as hidden or not.
+
+<br><br>
+
+If an index file was found it is given back to <strong>httpd::doc</strong>
+for handling (<b class='cmd'>Doc_Handle</b>).
+
+
+<br><br>
+<dt><a name="3"><b class='cmd'>Dir_HideListings</b> </a><dd>
+
+
+After the call of command all requests for directories without an
+index file will generate not-found replies.
+
+
+<br><br>
+<dt><a name="4"><b class='cmd'>Dir_ShowListings</b> </a><dd>
+
+
+After the call of command all requests for directories without an
+index file will generate listings of their contents.
+
+This is also the default status for the package.
+
+
+<br><br>
+<dt><a name="5"><b class='cmd'>Dir_ListingIsHidden</b> </a><dd>
+
+
+Returns the status set by <b class='cmd'>Dir_HideListings</b>
+and <b class='cmd'>Dir_ShowListings</b>.
+
+
+</dl>
+
+
+
+
+
+<h2><a name="seealso">SEE ALSO</a></h2>
+<p>
+httpd, httpd::doc, httpd::doc_error, httpd::url, httpd::utils
+<h2><a name="keywords">KEYWORDS</a></h2>
+<p>
+directory, documents, filesystem, web server
+<h2><a name="copyright">COPYRIGHT</a></h2>
+<p>
+Copyright &copy; 2003 Andreas Kupries &lt;andreas_kupries@users.sourceforge.net&gt;<br>
+</body></html>
+

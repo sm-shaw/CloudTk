@@ -1,0 +1,115 @@
+# ::cloudtk::Auth --
+#       This procedure is used in the callback of the .tclaccess
+#       files.
+
+proc ::cloudtk::Auth {sock realm user pass} {
+
+     set file [file join $::Config(docRoot) cloudtk .tclaccess]
+     set ::auth${file}(htaccessp,userfile) $::Config(AuthUserFile)
+     # now check the Basic credentials
+     set crypt [AuthGetPass $sock $file $user]
+     set salt [string range $crypt 0 1]
+     set crypt2 [crypt $pass $salt]
+     if {[string compare $crypt $crypt2] != 0} {
+         return 0        ;# Not the right password
+     } else {
+         return 1
+     }
+}
+
+# ::cloudtk::AccessHook --
+#       This procedure is used via Url_AccessInstallPrepend to change
+#       the default behaviour of the authentication. It check if the
+#       the url starts with /cloudtk or /kanaka and allows access
+#       based on what is set in the AuthTargetFile.txt file.
+
+proc ::cloudtk::AccessHook {sock url} {
+    global Doc
+    upvar #0 Httpd$sock data
+    variable Target
+
+    if {![string equal [file mtime $Target(AuthTargetFile,file)] $Target(AuthTargetFile,mtime)]} {
+        ::cloudtk::AuthTarget
+    }
+
+    # Make sure the path doesn't sneak out via ..
+    # This turns the URL suffix into a list of pathname components
+
+    if {[catch {Url_PathCheck $data(suffix)} data(pathlist)]} {
+        Doc_NotFound $sock
+        return denied
+    }
+
+    # Figure out the directory corresponding to the domain, taking
+    # into account other document roots.
+
+    if {[regexp {^(/cloudtk|/kanaka|/favicon.ico|/images|/robots.txt|/google4aa326e7c1a0a27e.html)} $url]} {
+        set directory [file join $Doc(root,/) cloudtk]
+
+        set suffix [Url_PathCheck [string trimleft $data(suffix) /]]
+        if {![regexp {.*(/)$} $suffix _ slash]} {
+            set slash ""
+        }
+        if {$Target(AuthTargetFile,VNC) == 0} {
+            if {[regexp {^(/cloudtk/|/kanaka/noVNC|/favicon.ico|/images/|/robots.txt|/google4aa326e7c1a0a27e.html)} $url]} {
+                return ok
+            } elseif {[info exists ::Session:$suffix]} {
+                return ok
+            }
+
+        }
+
+        # Look for .tclaccess file in cloudtk directory.
+        # This controls access to cloudtk and kanaka
+        # directories.
+        set cookie [Auth_Check $sock $directory ""]
+
+        # Finally, check access
+
+        if {![Auth_Verify $sock $cookie]} {
+            return denied
+        } else {
+            return skip
+        }
+     } elseif {[regexp {^(/debug|/status)} $url]} {
+               return skip
+     } elseif {[regexp {^(/)} $url]} {
+           if {$Target(AuthTargetFile,Website) == 0} {
+               return ok
+           } else {
+               return skip
+           }
+     } else {
+        return skip
+     }
+}
+
+
+# ::cloudtk::AuthTarget --
+#       This procedure sets up  the Auth Target file and gets its contents
+#       into an array. If the file doesn't exist it sets some defaults.
+
+proc ::cloudtk::AuthTarget {} {
+     variable Target
+     set Target(AuthTargetFile,file) [file join [file dirname $::Config(starkitTop)] auth AuthTarget.txt]
+
+     if {![file exists $Target(AuthTargetFile,file)]} {
+         set fd [open $Target(AuthTargetFile,file) w]
+         puts $fd "VNC 0"
+         puts $fd "Website 0"
+         close $fd
+         unset fd
+         set Target(AuthTargetFile,VNC) "0"
+         set Target(AuthTargetFile,Website) "0"
+         set Target(AuthTargetFile,mtime) [file mtime $Target(AuthTargetFile,file)]
+     } else {
+         set Target(AuthTargetFile,mtime) [file mtime $Target(AuthTargetFile,file)]
+         set fd [open $Target(AuthTargetFile,file) r]
+         while {[gets $fd line] >= 0} {
+                set Target(AuthTargetFile,[lindex $line 0]) "[lindex $line 1]"
+         }
+         close $fd
+         unset fd
+     }
+}
+

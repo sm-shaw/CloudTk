@@ -1,0 +1,105 @@
+[html::author "Colin McCormack"]
+[html::stylesheet ./htaccess.css]
+[mypage::header "Group Editor"]
+[
+ set directory [file normalize [ncgi::value directory]]
+ set dirW [html::quoteFormValue $directory]
+ set file [file normalize [ncgi::value file]]
+ set fileW [html::quoteFormValue $file]
+
+ if {$directory != ""} {
+     set dirRedir "?directory=$dirW"
+ } else {
+     set dirRedir ""
+ }
+
+ if {[ncgi::value action] == "Create"} {
+     if {![file exists $file]} {
+	 set fd [open $file w]
+	 puts $fd "\# Created [clock format [clock seconds]] by /htaccess"
+	 close $fd
+     }
+ }
+
+ set in [validation::parseFile $file groups]
+
+ if {$in != ""} {
+     # file doesn't exist - create it
+     set html [subst {
+	 <p>Group File $fileW doesn't exist.</p>
+	 <h4>Create new group file by typing its name, then clicking Create</h4>
+	 <form action="$page(url)" method=POST>
+	 <input type=hidden name=directory value="$dirW">
+	 <input type=text name=file value="$fileW">
+	 <input type=submit name=action value=Create>
+	 </form>
+     }]
+ } else {
+     # write file if necessary 
+     set group [ncgi::value group]
+     if {$group != ""} {
+	 if {[ncgi::value action] == "Del"} {
+	     catch {unset groups($group)}
+	 } else {
+	     set groups($group) [ncgi::value people]
+	 }
+
+	 # save the file if necessary
+	 validation::writefile $file groups
+
+	 set html "<p>Group File: $fileW (Updated)</p>"
+
+     } else {
+	 set html "<p>Group File: $fileW</p>"
+     }
+
+     append html {
+	 <table class='group' align='center'>
+	 <tr><th>Group</th><th>Members</th><th>Action</th></tr>
+     }
+
+     ncgi::setValue group ""
+     ncgi::setValue people ""
+     ncgi::setValue action 0
+
+     foreach {key} [lsort [array names groups]] {
+	 set value [html::quoteFormValue [lsort $groups($key)]]
+	 set key [html::quoteFormValue $key]
+	 append html [subst {
+	     <form action="$page(url)" method=POST>
+	     <tr>
+	     <input type=hidden name=file  value="$fileW">
+	     <input type=hidden name=group value="$key">
+	     <input type=hidden name=directory value="$dirW">
+
+	     <td><input type=submit value="$key" size=12></td>
+	     <td><input type=text name=people value="$value" size=50></td>
+	     <td><input type=checkbox name=action value=Del>Del</td>
+	     </tr>
+	     </form>
+	 }]
+     }
+     append html [subst { 
+	 <form action="$page(url)" method=POST>
+	 <tr>
+	 <input type=hidden name=file  value="$fileW">
+	 <input type=hidden name=directory value="$dirW">
+
+	 <td><input type=text name=group value="" size=12 title='new group name'></td>
+	 <td><input type=text name=people value="" size=50></td>
+	 <td><input type=submit name=action value=Add title='click to add new group'></td>
+	 </tr>
+	 </form>
+     }]
+ }
+ return $html
+]
+</table>
+<p><a href="index.html$dirRedir">Resume editing</a> $dirW</p>
+[
+ unset html
+#ncgi::setValue debug 1
+ return [::validation::debug groups]
+]
+
+[mypage::footer]

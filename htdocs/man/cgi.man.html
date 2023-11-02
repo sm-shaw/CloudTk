@@ -1,0 +1,145 @@
+<html><head>
+<title>httpd::cgi - Tcl Web Server </title>
+</head>
+<! -- Generated from file '' by tcllib/doctools with format 'html'
+   -->
+<! -- Copyright &copy; 2003 Andreas Kupries &lt;andreas_kupries@users.sourceforge.net&gt;
+   -->
+<! -- CVS: $Id$ httpd::cgi.n
+   -->
+
+<body>
+<h1> httpd::cgi(n) 1.1  &quot;Tcl Web Server&quot;</h1>
+<h2><a name="name">NAME</a></h2>
+<p>
+<p> httpd::cgi - CGI handling
+
+
+
+
+<h2><a name="synopsis">SYNOPSIS</a></h2>
+<p>
+package require <b>httpd::cgi ?1.1?</b><br>
+<br><table border=1 width=100% cellspacing=0 cellpadding=0><tr            bgcolor=lightyellow><td bgcolor=lightyellow><table 0 width=100% cellspacing=0 cellpadding=0><tr valign=top ><td ><a href="#1"><b class='cmd'>Cgi_Directory</b> <i class='arg'>virtual</i> ?<i class='arg'>directory</i>?</a></td></tr>
+<tr valign=top ><td ><a href="#2"><b class='cmd'>Cgi_Domain</b> <i class='arg'>prefix</i> <i class='arg'>directory</i> <i class='arg'>sock</i> <i class='arg'>suffix</i></a></td></tr>
+<tr valign=top ><td ><a href="#3"><b class='cmd'>Doc_application/x-cgi</b> <i class='arg'>path suffix sock</i></a></td></tr>
+<tr valign=top ><td ><a href="#4"><b class='cmd'>Cgi_SetEnv</b> <i class='arg'>sock path</i> ?<i class='arg'>var</i>?</a></td></tr>
+<tr valign=top ><td ><a href="#5"><b class='cmd'>Cgi_SetEnvInterp</b> <i class='arg'>sock path interp</i></a></td></tr>
+<tr valign=top ><td ><a href="#6"><b class='cmd'>Cgi_SetEnvAll</b> <i class='arg'>sock path extra url var</i></a></td></tr>
+<tr valign=top ><td ><a href="#7"><b class='cmd'>Cgi_Ident</b> <i class='arg'>state</i></a></td></tr>
+</table></td></tr></table>
+<h2><a name="description">DESCRIPTION</a></h2>
+<p>
+
+The package <strong>httpd::cgi</strong> provides generic facilities for
+the implementation of <em>application cgi</em> domains. These are
+domains where each url in the domain is handled by its own tcl
+command. Urls for which there is no command to handle it do not exists
+and cause the generation of an http error reply.
+
+<p>
+
+<em>Note:</em> This package also provides a number of type-specific doc
+handlers which will be picked up and used automatically by package
+<strong>httpd::doc</strong>.
+
+This will work if and only if an appropriate file extension to mime
+type mapping was added to <strong>httpd::mtype</strong> during startup of the
+server. If a file &quot;<strong>mime.types</strong>&quot; is present in the server library
+directory (residence of all packages) it will be read automatically
+and used to set up a standard mapping to support the type specific
+handlers exported by this package.
+
+
+<h2><a name="publicapi">Public API</a></h2>
+<p>
+<p>
+
+<dl>
+
+<dt><a name="1"><b class='cmd'>Cgi_Directory</b> <i class='arg'>virtual</i> ?<i class='arg'>directory</i>?</a><dd>
+
+
+Registers the url prefix <i class='arg'>virtual</i> as domain for the handling of
+cgi requests. The given <i class='arg'>directory</i> is registered as a root in the
+<em>doc</em> domain. If it is not specified then its name will be
+derived directly from the url prefix <i class='arg'>virtual</i>.
+
+<br><br>
+
+The basic standard initialization of the <b class='cmd'>tclhttpd</b> server will
+register the url prefix &quot;<strong>/cgi-bin/</strong>&quot;.
+
+
+<br><br>
+<dt><a name="2"><b class='cmd'>Cgi_Domain</b> <i class='arg'>prefix</i> <i class='arg'>directory</i> <i class='arg'>sock</i> <i class='arg'>suffix</i></a><dd>
+
+
+The domain handler command. It is public only because of the
+fallback scheme in the module <em>doc</em>, which calls it directly
+in some situations.
+
+<br><br>
+<dt><a name="3"><b class='cmd'>Doc_application/x-cgi</b> <i class='arg'>path suffix sock</i></a><dd>
+
+
+This command is a type-specific document handler and is called by the
+package <strong>httpd::doc</strong> if there is no extra pathname after the
+name of a cgi script, and the module did find a &quot;<strong>.cgi</strong>&quot; file.
+
+<br><br>
+<dt><a name="4"><b class='cmd'>Cgi_SetEnv</b> <i class='arg'>sock path</i> ?<i class='arg'>var</i>?</a><dd>
+
+
+This command sets up the environment variables for the CGI
+applications. They are passed implicitly to the applications
+during the <b class='cmd'>open</b> call which spawns them as separate process.
+
+<br><br>
+
+The request handle is on the connection <i class='arg'>sock</i>. If <i class='arg'>var</i> is
+not specified then the command will manipulate the variable <strong>env</strong>,
+else it will work with the specified variable. It assumes that the
+variable is in the callers scope.
+
+<br><br>
+<dt><a name="5"><b class='cmd'>Cgi_SetEnvInterp</b> <i class='arg'>sock path interp</i></a><dd>
+
+
+Like <b class='cmd'>Cgi_SetEnv</b>, but modifies the global variable <strong>env</strong> in
+the specified slave interpreter <i class='arg'>interp</i>.
+
+<br><br>
+<dt><a name="6"><b class='cmd'>Cgi_SetEnvAll</b> <i class='arg'>sock path extra url var</i></a><dd>
+
+
+The worker command for both <b class='cmd'>Cgi_SetEnv</b> and
+
+<b class='cmd'>Cgi_SetEnvInterp</b>.
+
+
+<br><br>
+<dt><a name="7"><b class='cmd'>Cgi_Ident</b> <i class='arg'>state</i></a><dd>
+
+
+Enables or disables IDENT lookup, according to the value of the
+boolean flag <i class='arg'>state</i>. Initially IDENT lookup is off.
+
+
+</dl>
+
+
+
+
+
+<h2><a name="seealso">SEE ALSO</a></h2>
+<p>
+httpd, httpd::counter, httpd::doc, httpd::doc_error, httpd::log, httpd::threadmgr, httpd::url
+<h2><a name="keywords">KEYWORDS</a></h2>
+<p>
+cgi, web server
+<h2><a name="copyright">COPYRIGHT</a></h2>
+<p>
+Copyright &copy; 2003 Andreas Kupries &lt;andreas_kupries@users.sourceforge.net&gt;<br>
+</body></html>
+

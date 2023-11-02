@@ -1,0 +1,85 @@
+[Doc_Dynamic]
+[
+foreach {name value} $page(query) {
+        set session [Session_Match $page(query)]
+}
+         upvar #0 Session:$session state
+
+        if {$session eq ""} {
+            return "<br><h2><b>Error message = Not a valid Session ID</b></h2>"
+        } else {
+            return [subst {
+        <p>
+
+        <script src="/kanaka/noVNC/include/base64.js"></script>
+        <script src="/kanaka/noVNC/include/util.js"></script>
+        <script src="/kanaka/noVNC/include/websock.js"></script>
+        <script src="/kanaka/noVNC/include/webutil.js"></script> 
+        <script src="/kanaka/include/keysym.js"></script> 
+        <script src="/kanaka/include/VT100.js"></script> 
+        <script src="/kanaka/include/wstelnet.js"></script> 
+        <!-- Uncomment to activate firebug lite -->
+        <!--
+        <script type='text/javascript' 
+            src='http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js'></script>
+        -->
+
+        <table cellpadding=0 cellspacing=0 border=0 width=100%>
+        <tr>  <td align=left><font face="arial"><img src=/kanaka/include/noVNC.png border=0></font></td>  <td><font face="arial"><h2>WebSocket Telnet Client</h2></font></td>  </tr>
+        </table><font face="arial">
+        <p>
+        <input id='host' type='hidden' value='window.location.hostname'>&nbsp;
+        <input id='port' type='hidden' value='window.location.port'>&nbsp;
+        <input id='encrypt' type='hidden' value='$state(encrypt)'>&nbsp;
+        <input id='connectButton' type='button' value='Connect' style='width:100px'
+            onclick="connect();">&nbsp;
+        to/from Host: $state(TCPhost) Port: $state(TCPport)
+        <br><br>
+
+        <pre id="terminal"></pre>
+
+        <script>
+            var telnet;
+
+            function connect() {
+                telnet.connect(\$D('host').value,
+                               \$D('port').value,
+                               \$D('encrypt').value);
+                \$D('connectButton').disabled = true;
+                \$D('connectButton').value = "Connecting";
+            }
+
+            function disconnect() {
+                \$D('connectButton').disabled = true;
+                \$D('connectButton').value = "Disconnecting";
+                telnet.disconnect();
+            }
+
+            function connected() {
+                \$D('connectButton').disabled = false;
+                \$D('connectButton').value = "Disconnect";
+                \$D('connectButton').onclick = disconnect;
+            }
+
+            function disconnected() {
+                \$D('connectButton').disabled = false;
+                \$D('connectButton').value = "Connect";
+                \$D('connectButton').onclick = connect;
+            }
+
+            window.onload = function() {
+                console.log("onload");
+                var url = document.location.href;
+                \$D('host').value = (window.location.hostname); 
+                \$D('port').value = (window.location.port) + '/websockit2me/$session';
+                telnet = Telnet('terminal', connected, disconnected);
+            }
+        </script>
+        <p>
+        <br>
+        <b>N.B.</b>To reconnect with the same host go back to the previous page to establish a new session!
+        <br>
+        <p>
+        }]
+}
+]

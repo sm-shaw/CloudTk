@@ -1,0 +1,254 @@
+<html><head>
+<title>tclhttpd - Tcl Web Server </title>
+</head>
+<! -- Generated from file '' by tcllib/doctools with format 'html'
+   -->
+<! -- Copyright &copy; 1998-2000 by Ajuba Solutions   -- Copyright &copy; 2003 Andreas Kupries &lt;andreas_kupries@users.sourceforge.net&gt;
+   -->
+<! -- CVS: $Id$ tclhttpd.1
+   -->
+
+<body>
+<h1> tclhttpd(1) 1.0  &quot;Tcl Web Server&quot;</h1>
+<h2><a name="name">NAME</a></h2>
+<p>
+<p> tclhttpd - Tcl Web Server
+
+
+
+
+<h2><a name="synopsis">SYNOPSIS</a></h2>
+<p>
+<table border=1 width=100% cellspacing=0 cellpadding=0><tr            bgcolor=lightyellow><td bgcolor=lightyellow><table 0 width=100% cellspacing=0 cellpadding=0><tr valign=top ><td ><strong>tclsh</strong> &quot;<strong>httpd.tcl</strong>&quot; ?<i class='arg'>options</i>?</td></tr>
+</table></td></tr></table>
+<h2><a name="description">DESCRIPTION</a></h2>
+<p>
+
+
+
+TclHttpd is a simple, extensible, embeddable Web Server.  The best
+source of documentation is in HTML distributed with the server.
+
+<p>
+
+To start the server, simply run the &quot;<strong>httpd.tcl</strong>&quot; script with
+<strong>tclsh</strong> or <strong>wish</strong>.  For example, this starts the server
+on the standard Web server port, 80:
+
+<p>
+<p><table><tr><td bgcolor=black>&nbsp;</td><td><pre class='sample'>
+    tclsh &lt;installdir&gt;/bin/httpd.tcl -port 80
+</pre></td></tr></table></p>
+<p>
+
+Note that you must start the server as root if you use port numbers
+less than 1024 on UNIX systems.  If you want the server process to run
+under a different user than root, which is strongly recommended, then
+use the <strong>-uid</strong> and <strong>-gid</strong> options.  This way the server
+can start as root, open the socket, and then switch to a less
+privileged account.
+
+
+
+<h2><a name="options">OPTIONS</a></h2>
+<p>
+
+<dl>
+
+<dt><strong>help</strong><dd>
+Displays usage information, then exit without doing anything.
+
+<br><br>
+<dt><strong>config</strong> <i class='arg'>filename</i><dd>
+Name of the configuration file (e.g. &quot;<strong>tclpro/bin/tclhttpd.rc</strong>&quot;).
+
+<br><br>
+<dt><strong>main</strong> <i class='arg'>filename</i><dd>
+Name of the per-thread main script (e.g. &quot;<strong>tclpro/bin/httpdthread.tcl</strong>&quot;).
+
+<br><br>
+<dt><strong>docRoot</strong> <i class='arg'>directory</i><dd>
+The root directory of your web pages (e.g., &quot;<strong>tclpro/tclhttpd/htdocs</strong>&quot;).
+
+<br><br>
+<dt><strong>port</strong> <i class='arg'>value</i><dd>
+HTTP listening port.  Defaults to <strong>8015</strong>.
+
+<br><br>
+<dt><strong>host</strong> <i class='arg'>value</i><dd>
+The hostname for the HTTP listening socket.
+
+<br><br>
+<dt><strong>ipaddr</strong> <i class='arg'>value</i><dd>
+Interface the server should bind to.
+
+<br><br>
+<dt><strong>webmaster</strong> <i class='arg'>email</i><dd>
+Email contact for webmaster.
+
+<br><br>
+<dt><strong>uid</strong> <i class='arg'>userid</i><dd>
+User name or ID for server process user ID.
+
+<br><br>
+<dt><strong>gid</strong> <i class='arg'>groupid</i><dd>
+Group name or ID for server process group ID.
+
+<br><br>
+<dt><strong>threads</strong> <i class='arg'>num</i><dd>
+Run with <i class='arg'>num</i> worker threads.  Requires a thread safe Tcl shell.
+
+<br><br>
+<dt><strong>library</strong> <i class='arg'>directory</i><dd>
+Directory to add to the auto_path.
+
+<br><br>
+<dt><strong>debug</strong> <i class='arg'>boolean</i><dd>
+Causes extra print statements during startup if set to to <strong>true</strong>.
+
+
+
+</dl>
+
+
+<h2><a name="configurationandcustomization">CONFIGURATION AND CUSTOMIZATION</a></h2>
+<p>
+
+The main script depends on a per-thread Tcl script,
+
+&quot;<strong>httpdthread.tcl</strong>&quot;, and a configuration file, &quot;<strong>tclhttpd.rc</strong>&quot;.
+These have configuration settings and the start up code for the web
+server.
+
+<p>
+
+The configuration file can be used to set the port, user ID, and other
+values described in the Options list above.  You can configure
+additional features such as log file location, and more, by editing
+the configuration file.  There is an explanation about each option, so
+you can make a copy of the configuration file and try out new
+settings.
+
+<p>
+<p><table><tr><td bgcolor=black>&nbsp;</td><td><pre class='sample'>
+    tclsh httpd.tcl -config myserver.rc
+</pre></td></tr></table></p>
+<p>
+
+If you plan to extend Tcl Httpd with your own code, you may need to
+add initialization code to &quot;<strong>bin/httpd.tcl</strong>&quot; and
+
+&quot;<strong>bin/httpdthread.tcl</strong>&quot;.  This code is typically a
+
+&quot;<b class='cmd'>package require</b>&quot; for your module and one or two calls to
+initialize it.  For example, this code in &quot;<strong>httpdthread.tcl</strong>&quot;
+enables a /debug URL implementation that lets you examine the state of
+the server.
+
+<p>
+<p><table><tr><td bgcolor=black>&nbsp;</td><td><pre class='sample'>
+    package require httpd::debug
+    Debug_Url /debug Debug
+</pre></td></tr></table></p>
+<p>
+
+The web server should have access to any Tcl package installed along
+with your Tcl installation.  Consult the on-line HTML documentation
+for a more indepth discussion of programming the server.
+
+
+<h2><a name="webpagetemplates">WEB PAGE TEMPLATES</a></h2>
+<p>
+<p>
+
+TclHttpd supports a flexible template system that embeds Tcl code into
+your HTML pages.  The Web Server processes the Tcl, which typically
+generates bits and pieces of your HTML page, and delivers the result
+to the client transparently.  You can cache the results of processing
+your templates, or you can have pages that are processed dynamically
+on each access.
+
+<p>
+
+Any page that ends in &quot;.tml&quot; is treated like an HTML+Tcl template
+page.  The Web Server uses the Tcl <b class='cmd'>subst</b> command to replace
+commands within brackets, [ and ], and variable references, like
+$Phone, with their value.  Backslash processing is also done.  The
+main thing you need to watch out for is putting literal dollar amounts
+in your templates.  You'll need to protect your $ with a backslash:
+
+<p><p><table><tr><td bgcolor=black>&nbsp;</td><td><pre class='sample'>
+The price is \\$10.00.
+</pre></td></tr></table></p><p>
+
+The &quot;.tml&quot; files in the sample &quot;<strong>htdocs</strong>&quot; directory structure
+should give you examples to work from.
+
+<p>
+
+Try to limit the Tcl code in your pages to simple procedure calls, and
+put the procedure definitions in per-directory files named &quot;.tml&quot;.
+The name of this file is confusing: each directory can contain a file
+named &quot;dot-t-m-l&quot; (&quot;<strong>.tml</strong>&quot;) that should contain Tcl code.  These
+files are automatically loaded before any templates in that directory
+(or subdirectories) is processed.
+
+<p>
+
+For example, first create a new directory of the &quot;<strong>htdocs</strong>&quot;
+directory that comes with TclHttpd.
+
+<p><p><table><tr><td bgcolor=black>&nbsp;</td><td><pre class='sample'>
+mkdir htdocs/mystuff
+</pre></td></tr></table></p><p>
+
+Next, put the following into &quot;<strong>htdocs/mystuff/.tml</strong>&quot;:
+
+<p><p><table><tr><td bgcolor=black>&nbsp;</td><td><pre class='sample'>
+package require htmlutils
+
+# A procedure to format the date the way you like it
+proc MyDate {{seconds {}}} {
+    if {[string length $seconds] == 0} {
+	set seconds [clock seconds]
+    }
+    return [clock format $seconds -format &quot;%B %m, %Y&quot;]
+}
+# Some page settings
+set bgcolor pink
+</pre></td></tr></table></p><p>
+
+Now, any page in the &quot;<strong>htdocs/mystuff</strong>&quot; directory can use the
+<b class='cmd'>MyDate</b> procedure in a template.  Finally, put the following into
+&quot;<strong>htdocs/mystuff/index.tml</strong>&quot;
+
+<p><p><table><tr><td bgcolor=black>&nbsp;</td><td><pre class='sample'>
+&lt;title&gt;My Stuff&lt;/title&gt;
+&lt;body text=black bgcolor=$bgcolor&gt;
+&lt;h2&gt;My Stuff&lt;/h2&gt;
+[MyDate]
+&lt;br&gt;
+Page content here.
+&lt;p&gt;
+Send email to [Mailto [Doc_Webmaster]].
+</pre></td></tr></table></p><p>
+
+The <strong>bgcolor</strong> variable is set in the &quot;<strong>.tml</strong>&quot; file and used in
+the BODY tag.  The <b class='cmd'>Mailto</b> is part of the <strong>htmlutils</strong>
+package that was required by the &quot;<strong>.tml</strong>&quot; file.
+
+The <b class='cmd'>Doc_Webmaster</b> procedure is built into TclHttpd.  The
+<b class='cmd'>MyDate</b> procedure was added by you, and is shared by any page in
+or below the &quot;<strong>htdocs/mystuff</strong>&quot; directory.
+
+
+
+<h2><a name="keywords">KEYWORDS</a></h2>
+<p>
+http, tclhttpd, web server
+<h2><a name="copyright">COPYRIGHT</a></h2>
+<p>
+Copyright &copy; 1998-2000 by Ajuba Solutions<br>
+Copyright &copy; 2003 Andreas Kupries &lt;andreas_kupries@users.sourceforge.net&gt;<br>
+</body></html>
+

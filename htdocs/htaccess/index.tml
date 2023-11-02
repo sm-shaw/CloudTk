@@ -1,0 +1,23 @@
+[Doc_Dynamic]
+[mypage::header "Access Control"]
+
+<p>
+On the first startup CloudTk creates an "auth" directory in the same directory as the 
+CloudTk Starkit. In the "auth" directory a file is created "AuthUserFile".
+This file contains the Apache-style usernames and passwords in the form
+<p>
+    <pre>
+&lt;username&gt;:&lt;encrypted_password&gt;
+..</pre>
+<p>
+On the first run the default webmaster username and password is written to this file.
+If this file is deleted,  the file will be recreated and the 
+default webmaster username and password will be rewritten to this file on the next startup
+of CloudTk.
+<p>
+If you have a large number of users already in an Apache-style file, just copy and paste
+into the "AuthUserFile".
+<p>
+CloudTk has its own <a href="/htaccess/user.tml">Access Control Editor</a> for creating, deleting and editing users.
+<p>
+[mypage::footer] 
