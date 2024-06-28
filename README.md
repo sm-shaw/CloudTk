@@ -3,7 +3,7 @@ CloudTk for HammerDB is a fork of [CloudTk](https://cloudtk.tcl-lang.org/) by Je
 
 Before installing CloudTk, install the following additional packages in your Linux OS:
 ```
-apt-get install vnc4server matchbox-window-manager libxss1
+apt-get install tigervnc-standalone-server matchbox-window-manager libxss1
 ```
 
 To deploy CloudTk for HammerDB install [HammerDB for Linux](https://www.hammerdb.com/docs/ch01s08.html) and download and extract [CloudTk](https://github.com/sm-shaw/CloudTk/releases/tag/1.4.0-51) into the top level HammerDB directory. You will then have a directory called CloudTk-1.4.0-51 in your HammerDB for Linux installation. 
